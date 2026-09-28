@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db.models import Max, Sum
 
 from .models import Car, Record
 from .serializers import CarSerializer, RecordSerializer
@@ -117,3 +118,24 @@ class RecordDetailView(generics.RetrieveUpdateDestroyAPIView):
         if getattr(self, 'swagger_fake_view', False):
             return Record.objects.none()
         return Record.objects.filter(car__owner=self.request.user).select_related('car')
+
+class CarStatsView(APIView):
+    @extend_schema(responses=OpenApiTypes.OBJECT)
+    def get(self, request, pk):
+        car = get_object_or_404(Car, pk=pk, owner=request.user)
+        records = car.records.all()
+
+        total_spent = records.aggregate(total=Sum('amount'))['total'] or 0
+
+        by_category = {}
+        for row in records.values('category').annotate(total=Sum('amount')):
+            by_category[row['category']] = row['total']
+
+        current_odometer = records.aggregate(m=Max('odometer'))['m'] or car.initial_odometer
+
+        return Response({
+            'car': car.name,
+            'current_odometer': current_odometer,
+            'total_spent': total_spent,
+            'by_category': by_category,
+        })
