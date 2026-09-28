@@ -3,9 +3,6 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    """
-    Менеджер пользователя, у которого логин — email, а не username.
-    """
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email must be set')
