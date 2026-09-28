@@ -2,8 +2,8 @@ venv/
 .venv/
 __pycache__/
 *.pyc
-db.sqlite3
 .git/
 .vscode/
 .idea/
 .env
+*/migrations/0*.py

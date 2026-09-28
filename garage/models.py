@@ -37,7 +37,6 @@ class Record(models.Model):
         WASH = 'wash', 'Wash'
         OTHER = 'other', 'Other'
 
-
     ENERGY_CATEGORIES = ('petrol', 'diesel', 'charging')
 
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='records')
