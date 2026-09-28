@@ -13,7 +13,5 @@ __pycache__/
 Thumbs.db
 .DS_Store
 
-# Database
-db.sqlite3
 # Migrations
 */migrations/0*.py
